@@ -1,24 +1,21 @@
 const noteRoutes = require('express').Router();
-const express = require("express");
 const path = require("path");
-const fs = require('fs');
-const uuid = require('uuid');
-const util = require('util');
-const readFromFile = util.promisify(fs.readFile);
+const NoteRepo = require('./NoteRepo');
 
-
-//setting up the routes
-//getting the notes from the db json file
+const noteRepo = new NoteRepo(path.join(__dirname, "../../../db/db.json"));
 
 noteRoutes.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, "../../notes.html"));
 });
-//get the db routing info
+
 noteRoutes.get('/api/notes', (req, res) => {
-    readFromFile(path.join(__dirname, "../../../db/db.json"))
-        .then(data => {
-            return res.json(JSON.parse(data));
-        })
+    noteRepo.getNotes().then(notes => res.json(notes));
+
 })
+
+noteRoutes.post('/api/notes', (req, res) => {
+    noteRepo.saveNote(req.body.title, req.body.text)
+        .then(newNote => res.json(newNote));
+});
 
 module.exports = noteRoutes;
