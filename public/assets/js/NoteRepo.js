@@ -33,11 +33,16 @@ class NoteRepo {
         return notes;
     }
 
+    async deleteNote(id) {
+        var notes = await this.getNotes();
 
-    getNote() {
+        notes.filter(note => note.id !== id);
 
-    }
-
+        fs.writeFile(this.dbPath, JSON.stringify(notes, null, 4), (err) =>
+            err ? console.error(err) : console.info(`\nData written to ${this.dbPath}`)
+        );
+        return newNote;
+    };
 }
 
 module.exports = NoteRepo;

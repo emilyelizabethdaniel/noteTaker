@@ -18,4 +18,9 @@ noteRoutes.post('/api/notes', (req, res) => {
         .then(newNote => res.json(newNote));
 });
 
+noteRoutes.delete('/api/notes/:id', (req, res) => {
+    noteRepo.deleteNote(req.query.id)
+        .then(newNote => res.json(newNote));
+});
+
 module.exports = noteRoutes;
