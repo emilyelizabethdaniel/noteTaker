@@ -2,7 +2,10 @@ const fs = require('fs');
 const uuid = require('uuid');
 const util = require('util');
 const readFromFile = util.promisify(fs.readFile);
-
+const writeToFile = (destination, content) =>
+    fs.writeFile(destination, JSON.stringify(content, null, 4), (err) =>
+        err ? console.error(err) : console.info(`\nData written to ${destination}`)
+    );
 class NoteRepo {
 
     constructor(dbPath, ) {
@@ -33,15 +36,13 @@ class NoteRepo {
         return notes;
     }
 
-    async deleteNote(id) {
-        var notes = await this.getNotes();
-
-        notes.filter(note => note.id !== id);
-
-        fs.writeFile(this.dbPath, JSON.stringify(notes, null, 4), (err) =>
-            err ? console.error(err) : console.info(`\nData written to ${this.dbPath}`)
-        );
-        return newNote;
+    deleteNote(id) {
+        this.getNotes()
+            .then(notes => {
+                console.log('notes :>> ', notes);
+                var newNotes = notes.filter(note => note.id !== id);
+                return writeToFile(this.dbPath, newNotes);
+            });
     };
 }
 
